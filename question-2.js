@@ -17,14 +17,14 @@
 */
 
 const solution = str => {
-    if(str === '바나나') {
-        return "바나나 상품은 1500원입니다." 
-    } else if (str === '자두') {
-        return "자두 상품은 1200원입니다."
+    fruits = {'바나나': 1500, '자두': 1200} 
+    if(fruits[str]){
+        return `${str} 상품은 ${fruits[str]}원입니다.`
     } else {
         return str + " 상품이 없습니다."
     }
-}
+    
+} 
 
 console.log(solution('바나나')) // 바나나 상품은 1500원입니다.
 console.log(solution('자두')) // 바나나 상품은 1200원입니다.
