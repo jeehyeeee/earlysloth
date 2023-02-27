@@ -17,7 +17,7 @@
 */
 
 const solution = str => {
-    fruits = {'바나나': 1500, '자두': 1200} 
+    const fruits = {'바나나': 1500, '자두': 1200} 
     if(fruits[str]){
         return `${str} 상품은 ${fruits[str]}원입니다.`
     } else {
