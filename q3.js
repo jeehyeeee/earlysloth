@@ -6,9 +6,9 @@
  setAbleSkill: function(skill,score) {
     this.ableSkill[skill] = score;
 },
-    getlearnProgramming: function() {
-        return Object.keys(this.ableSkill).length
-    }
+   // getlearnProgramming: function() {
+      //  return Object.keys(this.ableSkill).length
+ //   }
  };
 
  userInfo.setAbleSkill("javascript","10점")
