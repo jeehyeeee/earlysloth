@@ -7,16 +7,33 @@ const movie = ["명량","극한직업","신과함께","국제시장","어벤져�
 // 
 
 
-let newArr = []
-for (let i = 0; i < date.length; i++) {
-    let result = movie[i] + date[i].slice(5)
-    console.log(result)
-    newArr.push(result)
-}
-// movie[i] -> movie의 i번째 배열
- console.log(newArr)
 
- 
+// for (let i = 0; i < date.length; i++) {
+//     let result = movie[i] + date[i].slice(5)
+//     console.log(result)
+//     newArr.push(result)
+// }
+//movie[i] -> movie의 i번째 배열
+// console.log(newArr)
+
+const newArr = date.map((item, index) => {
+    return movie[index] + item.slice(5)
+})
+//newArr.push()
+console.log(newArr)
+
+// 첫번째 인자 배열안에 있는 값(요소) item
+// 두번째 index 몇번쨰 순서 
+// item, index 고정되어있음 -> 걍 외우기
+
+date.forEach((item, index) => {
+    console.log(movie[index] + item.slice(5))
+})
+
+
+
+
+
 
 
 //2.
