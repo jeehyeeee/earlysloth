@@ -25,10 +25,6 @@
     flex-wrap: wrap;
     gap: 15px;
   }
-
-  .favorites img {
-    width: 150px;
-  }
 </style>
 
 <body>
@@ -37,58 +33,107 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
   <script type="text/babel">
+    const jsonLocalStorage = {
+      setItem: (key, value) => {
+        localStorage.setItem(key, JSON.stringify(value));
+      },
+      getItem: (key) => {
+        return JSON.parse(localStorage.getItem(key));
+      },
+    };
     console.log("야옹");
 
     const Title = (props) => {
-      return (
-        < h1>{props.children}</h1>
-      )
-    }
+      return < h1>{props.children}</h1>
+    };
 
-    const Form = () => {
+    const Form = ({ updateMainCat }) => {
+      const includesHangul = (text) => /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/i.test(text);
+      const [value, setValue] = React.useState('');
+      const [errorMessage, setErrorMessage] = React.useState('');
+      function handleInputChange(e) {
+        const userValue = e.target.value;
+        setErrorMessage('');
+        if (includesHangul(userValue)) {
+          setErrorMessage("한글은 입력할 수 없습니다.")
+        }
+        setValue(e.target.value.toUpperCase())
+      }
+      function handleFormSubmit(e) {
+        e.preventDefault();
+        setErrorMessage('');
+        if (value === '') {
+          setErrorMessage("빈 값으로 만들 수 없습니다.")
+          return;
+        }
+        updateMainCat();
+      }
       return (
-        <form>
-          <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
+        <form onSubmit={handleFormSubmit}>
+          <input type="text" name="name" placeholder="영어 대사를 입력해주세요" value={value} onChange={handleInputChange} />
           <button type="submit">생성</button>
+          <p style={{ color: 'red' }}>{errorMessage}</p>
         </form>
       )
     }
     function CatItem(props) {
       return (
         <li>
-          <img src={props.img} />
+          <img src={props.img} style={{ width: "150px" }} /> {/* value 값은 스트링으로 주기*/}
         </li>
       )
     }
 
-    function Favorites() {
+    function Favorites({ favorites }) {
       return (
         <ul className="favorites">
-          <CatItem img="https://cataas.com/cat/BxqL2EjFmtxDkAm2/says/inflearn" />
-          <CatItem img="https://cataas.com/cat/18MD6byVC1yKGpXp/says/JavaScript" />
+          {favorites.map((cat) => (<CatItem img={cat} key={cat} />
+          ))}
         </ul>
-      )
+      );
     }
 
-    const MainCard = ({ img }) => {  // ({img}) === (props) 같은 문법임
+    // ({img}) === (props) 같은 문법임
+    const MainCard = ({ img, onHeartClick }) => {
       return (
         <div className="main-card">
-          <img src={props.img} alt="고양이" width="400" />
-          <button>🤍</button>
+          <img src={img} alt="고양이" width="400" />
+          <button onClick={onHeartClick}>🤍</button>
         </div>
       )
     }
+    // jsx내에서 변수 쓸 때 {} 안에 이용, 변수이면서 객체받을때는 {{}} 두개
+    const App = () => {
+      const CAT1 = "https://cataas.com/cat/BxqL2EjFmtxDkAm2/says/inflearn";
+      const CAT2 = "https://cataas.com/cat/18MD6byVC1yKGpXp/says/JavaScript";
+      const CAT3 = "https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react";
 
-    const app = (
-      <div>
-        <Title>1번째 고양이 가라사대</Title>
-        <Form />
-        <MainCard img="https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react" />
-        <Favorites />
-      </ div>
-    )
+      const [counter, setCounter] = React.useState(jsonLocalStorage.getItem('counter'));  // 로컬스토리지에서는 value를 저장할 때 스트링 값으로 받기때문에 앞에 Number붙여서 숫자로 변환
+      const [mainCat, setMainCat] = React.useState(CAT1);
+      const [favorites, SetFavorites] = React.useState(jsonLocalStorage.getItem("favorites") || []);
+
+      function updateMainCat() {
+        setMainCat(CAT2);
+        const nextCounter = counter + 1;
+        setCounter(nextCounter);
+        jsonLocalStorage.setItem('counter', nextCounter)
+      }
+      function handleHeartClick() {
+        const nextFavorites = [...favorites, mainCat]
+        SetFavorites(nextFavorites);
+        jsonLocalStorage.setItem('favorites', nextFavorites)
+      }
+      return (
+        <div>
+          <Title>{counter}번째 고양이 가라사대</Title>
+          <Form updateMainCat={updateMainCat} />
+          <MainCard img={mainCat} onHeartClick={handleHeartClick} />
+          <Favorites favorites={favorites} />
+        </ div>
+      )
+    }
     const 여기다가그려 = document.querySelector('#app');
-    ReactDOM.render(Title, 여기다가그려)
+    ReactDOM.createRoot(여기다가그려).render(<App />)
   </script>
 </body>
 
